@@ -20,4 +20,4 @@ spec:
         - key: kubernetes.io/hostname
           operator: In
           values:
-          - k3sagent02
+          - k3sagent01

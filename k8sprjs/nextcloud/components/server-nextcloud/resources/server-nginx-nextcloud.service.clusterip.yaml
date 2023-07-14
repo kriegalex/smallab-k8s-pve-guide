@@ -10,7 +10,7 @@ spec:
   type: ClusterIP
   clusterIP: 10.43.100.3
   ports:
-  - port: 443
+  - port: 80
     protocol: TCP
     name: server
   - port: 9205

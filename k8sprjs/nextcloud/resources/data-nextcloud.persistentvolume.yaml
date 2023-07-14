@@ -5,7 +5,7 @@ metadata:
   name: data-nextcloud
 spec:
   capacity:
-    storage: 9.3G
+    storage: 466G
   volumeMode: Filesystem
   accessModes:
   - ReadWriteOnce
@@ -20,4 +20,4 @@ spec:
         - key: kubernetes.io/hostname
           operator: In
           values:
-          - k3sagent02
+          - k3sagent01

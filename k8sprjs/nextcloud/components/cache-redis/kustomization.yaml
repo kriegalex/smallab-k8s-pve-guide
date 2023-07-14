@@ -15,9 +15,9 @@ replicas:
 
 images:
 - name: redis
-  newTag: 6.2-alpine
+  newTag: 7.0.11-alpine
 - name: oliver006/redis_exporter
-  newTag: v1.32.0-alpine
+  newTag: v1.51.0-alpine
 
 configMapGenerator:
 - name: cache-redis

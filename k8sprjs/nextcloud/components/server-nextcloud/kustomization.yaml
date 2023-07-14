@@ -8,26 +8,29 @@ commonLabels:
 resources:
 - resources/data-server-nextcloud.persistentvolumeclaim.yaml
 - resources/html-server-nextcloud.persistentvolumeclaim.yaml
-- resources/server-apache-nextcloud.service.yaml
-- resources/server-apache-nextcloud.statefulset.yaml
+- resources/server-nginx-nextcloud.ingressroute.traefik.yaml
+- resources/server-nginx-nextcloud.service.clusterip.yaml
+- resources/server-nginx-nextcloud.statefulset.yaml
 
 replicas:
-- name: server-apache-nextcloud
+- name: server-nginx-nextcloud
   count: 1
 
 images:
 - name: nextcloud
-  newTag: 22.2-apache
+  newTag: 26-fpm-alpine
+- name: nginx
+  newTag: 1.25.1-alpine
 - name: xperimental/nextcloud-exporter
-  newTag: 0.4.0-15-gbb88fb6
+  newTag: 0.6.1
 
 configMapGenerator:
-- name: server-apache-nextcloud
+- name: server-nginx-nextcloud
   envs:
   - configs/params.properties
   files:
-  - configs/000-default.conf
-  - configs/ports.conf
+  - configs/nginx.conf
+  - configs/zz-docker.conf
 
 secretGenerator:
 - name: server-nextcloud

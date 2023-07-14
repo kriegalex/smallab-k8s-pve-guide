@@ -1,0 +1,21 @@
+# Wilcard certificate for lourenco.ch
+apiVersion: cert-manager.io/v1
+kind: Certificate
+
+metadata:
+  name: wildcard.lourenco.ch-tls
+  namespace: certificates
+spec:
+  secretName: wildcard.lourenco.ch-tls
+  secretTemplate:
+    annotations:
+      reflector.v1.k8s.emberstack.com/reflection-allowed: "true"
+      reflector.v1.k8s.emberstack.com/reflection-allowed-namespaces: "kube-system"
+      reflector.v1.k8s.emberstack.com/reflection-auto-enabled: "true"
+      reflector.v1.k8s.emberstack.com/reflection-auto-namespaces: "kube-system"
+  dnsNames:
+  - "*.lourenco.ch"
+  issuerRef:
+    name: route53-lourenco
+    kind: ClusterIssuer
+    group: cert-manager.io

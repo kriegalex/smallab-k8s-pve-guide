@@ -10,4 +10,4 @@ spec:
   volumeName: data-nextcloud
   resources:
     requests:
-      storage: 9.3G
+      storage: 466G

@@ -10,7 +10,7 @@ spec:
     spec:
       containers:
       - name: fpm
-        image: nextcloud:22.2-fpm-alpine
+        image: nextcloud:26-fpm-alpine
         ports:
         - containerPort: 9000
         env:
@@ -59,6 +59,26 @@ spec:
             secretKeyRef:
               name: cache-redis
               key: redis-password
+        - name: TRUSTED_PROXIES
+          valueFrom:
+            configMapKeyRef:
+              name: server-nginx-nextcloud
+              key: nextcloud-trusted-proxies
+        - name: OVERWRITECLIURL
+          valueFrom:
+            configMapKeyRef:
+              name: server-nginx-nextcloud
+              key: nextcloud-url
+        - name: OVERWRITEPROTOCOL
+          valueFrom:
+            configMapKeyRef:
+              name: server-nginx-nextcloud
+              key: nextcloud-protocol
+        - name: OVERWRITEHOST
+          valueFrom:
+            configMapKeyRef:
+              name: server-nginx-nextcloud
+              key: nextcloud-trusted-domains
         lifecycle:
           postStart:
             exec:
@@ -71,9 +91,11 @@ spec:
                 start-stop-daemon --background /cron.sh
         resources:
           limits:
-            memory: 512Mi
+            memory: 2Gi
+          requests:
+            cpu: 1000m
         volumeMounts:
-        - name: fpm-config
+        - name: nginx-config
           subPath: zz-docker.conf
           mountPath: /usr/local/etc/php-fpm.d/zz-docker.conf
         - name: html-storage
@@ -81,19 +103,13 @@ spec:
         - name: data-storage
           mountPath: /var/www/html/data
       - name: server
-        image: nginx:1.21-alpine
+        image: nginx:1.25.1-alpine
         ports:
-        - containerPort: 443
+        - containerPort: 80
+        resources:
+          limits:
+            memory: 256Mi
         volumeMounts:
-        - name: certificates
-          subPath: wildcard.deimos.cloud-tls.crt
-          mountPath: /etc/nginx/cert/wildcard.deimos.cloud-tls.crt
-        - name: certificates
-          subPath: wildcard.deimos.cloud-tls.key
-          mountPath: /etc/nginx/cert/wildcard.deimos.cloud-tls.key
-        - name: nginx-config
-          subPath: dhparam.pem
-          mountPath: /etc/ssl/dhparam.pem
         - name: nginx-config
           subPath: nginx.conf
           mountPath: /etc/nginx/nginx.conf
@@ -102,7 +118,7 @@ spec:
         - name: data-storage
           mountPath: /var/www/html/data
       - name: metrics
-        image: xperimental/nextcloud-exporter:0.4.0-15-gbb88fb6
+        image: xperimental/nextcloud-exporter:0.6.1
         ports:
         - containerPort: 9205
         env:
@@ -130,21 +146,10 @@ spec:
           name: server-nginx-nextcloud
           defaultMode: 0444
           items:
-          - key: dhparam.pem
-            path: dhparam.pem
           - key: nginx.conf
             path: nginx.conf
           - key: zz-docker.conf
             path: zz-docker.conf
-      - name: certificates
-        secret:
-          secretName: wildcard.deimos.cloud-tls
-          defaultMode: 0444
-          items:
-          - key: tls.crt
-            path: wildcard.deimos.cloud-tls.crt
-          - key: tls.key
-            path: wildcard.deimos.cloud-tls.key
       - name: html-storage
         persistentVolumeClaim:
           claimName: html-server-nextcloud

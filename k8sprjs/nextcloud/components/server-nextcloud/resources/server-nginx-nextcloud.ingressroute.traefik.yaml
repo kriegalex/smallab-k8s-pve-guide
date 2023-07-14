@@ -7,11 +7,11 @@ spec:
   entryPoints:
     - websecure
   tls:
-    secretName: wildcard.deimos.cloud-tls
+    secretName: wildcard.lourenco.ch-tls
   routes:
-  - match: Host(`nextcloud.deimos.cloud`) || Host(`nxc.deimos.cloud`)
+  - match: Host(`nextcloud.lourenco.ch`) || Host(`nxc.lourenco.ch`)
     kind: Rule
     services:
-    - name: server-nginx-nextcloud
+    - name: nxcd-server-nginx-nextcloud
       kind: Service
-      port: 443
+      port: 80
